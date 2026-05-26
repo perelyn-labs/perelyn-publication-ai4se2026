@@ -1,0 +1,301 @@
+% AI4SE Workshop @ KI 2026 — Position Paper
+% Springer LNCS format, max 4 pages
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{booktabs}
+
+\begin{document}
+
+\title{From Stateless to Cognitive: Temporal Memory as the Missing Layer in Agentic AI}
+
+\titlerunning{Temporal Memory in Agentic AI}
+
+\author{Michael Banf, Johannes Kuhn, Slawomir Garcarz \and Max Becker}
+
+\authorrunning{Banf et al.}
+
+\institute{Perelyn GmbH, Munich, Germany\\
+\email{michael.banf@perelyn.com}}
+
+\maketitle
+
+\begin{abstract}
+LLM-based agents operate with no durable memory by default. Recent
+architectures---extraction-based (Mem0), self-managing (Letta), and
+graph-based (Graphiti)---address persistence, yet empirical evaluations
+reveal a shared blind spot: \emph{temporal cognition}. Agents store facts
+but cannot reliably distinguish current from outdated knowledge, track
+belief evolution, or consolidate experiences across temporal distance. The
+LoCoMo-Plus experiment finds cognitive accuracy below 25\% across all three
+paradigms, with a 35--45 percentage-point drop from factual to cognitive
+tasks. We survey the rapidly growing architectural landscape (from $\sim$25
+papers in 2023 to 200+ in 2025, with 110+ submissions to the ICLR\,2026
+MemAgents workshop), analyze benchmark evidence for the temporal deficit,
+and identify four open challenges. We argue that closing the temporal gap
+is the prerequisite for genuine cognitive continuity.
+
+\keywords{Agentic Memory \and Temporal Reasoning \and Cognitive Continuity
+\and Knowledge Graphs \and LLM Agents}
+\end{abstract}
+
+%%% ------------------------------------------------------------------
+\section{Introduction}
+%%% ------------------------------------------------------------------
+
+The dominant LLM deployment pattern is stateless. Agentic systems break
+this pattern but expose a deeper problem: without persistent memory,
+agents cannot learn from experience or reason about change over time.
+The field has responded rapidly---from $\sim$25 papers in 2023 to 200+ in
+2025, with the ICLR\,2026 MemAgents workshop accepting 70 papers from 110+
+submissions~\cite{memagents2026}---yet our classification of all 70
+papers finds that 66\% propose new systems while only 4\% implement
+temporal mechanisms beyond basic timestamps. Every major AI provider ships
+memory (OpenAI since Feb\,2024, Anthropic Sep\,2025, Google Mar\,2026);
+the open-source ecosystem has matured (Mem0: 47K stars; Graphiti: 45K;
+Letta: 13K)~\cite{hu2025}.
+
+The CoALA taxonomy~\cite{sumers2024} maps human memory types onto agent
+components: \emph{working} (context window), \emph{semantic} (facts),
+\emph{episodic} (experiences), \emph{procedural} (skills). Three
+production paradigms address persistence: extraction-based
+(Mem0~\cite{mem0_2025}), self-managing (MemGPT/Letta~\cite{packer2023}),
+and graph-based temporal
+(Zep/Graphiti~\cite{rasmussen2025})~\cite{hu2025,zhang2024survey}.
+
+Yet benchmark evidence is sobering. LoCoMo-Plus~\cite{gurawaliya2026}
+found peak cognitive accuracy of just 24.2\% (Letta), 22.2\% (Zep), and
+18.0\% (Mem0)---while the same systems achieve 59--63\% on factual
+recall, a \textbf{35--45~pp factual-to-cognitive gap}.
+MemoryAgentBench~\cite{memoryagentbench2026} confirms: on multi-hop
+conflict resolution, \emph{all} methods score below 7\%. This is not a
+retrieval failure; it is a \emph{temporal cognition} failure.
+
+%%% ------------------------------------------------------------------
+\section{Temporal Memory Architectures}
+%%% ------------------------------------------------------------------
+
+\paragraph{Bi-temporal knowledge graphs.}
+Graphiti~\cite{rasmussen2025} distinguishes \emph{event time} (when
+something happened) from \emph{ingestion time} (when the system learned
+it), with every edge carrying explicit validity intervals. On the Deep
+Memory Retrieval benchmark, Zep reaches 94.8\% (vs.\ MemGPT 93.4\%);
+on LongMemEval, it achieves 71.2\% with gpt-4o using only 1.6K context
+tokens versus 115K for full-context baselines~\cite{rasmussen2025}.
+
+\paragraph{Semantic timelines and hierarchical consolidation.}
+TSM~\cite{tsm2026} identifies \emph{temporal inaccuracy} (memories indexed
+by dialogue time, not event time) and \emph{temporal fragmentation} (loss
+of durative state). It consolidates point-wise observations into durative
+memory, achieving 74.8\% on LongMemEval\_S---with temporal-category gains
+of +22.6 points over the A-MEM baseline. TiMem~\cite{timem2026}
+organizes conversations through a Temporal Memory Tree, reaching 75.3\%
+on LoCoMo (up from MemoryBank's 39.8\%) while reducing recalled memory
+tokens by 52\%. GAM~\cite{gam2026} decouples episodic from semantic
+consolidation via an Event Progression Graph, improving Temporal F1
+by 18\% over Mem0.
+
+\paragraph{Cognitive-science-inspired decay.}
+MemoryBank~\cite{zhong2024} implements Ebbinghaus-curve forgetting; the
+ACT-R-inspired architecture of~\cite{actr2025} integrates
+activation-based recall directly into generation, making forgetting
+intrinsic rather than post-hoc.
+
+\paragraph{Emerging: RL-based memory management.}
+A new direction replaces heuristic policies with learned ones:
+Memory-R1~\cite{memoryr1_2025} trains a Memory Manager via RL for
+ADD/UPDATE/DELETE operations; AgeMem~\cite{agemem2026} unifies LTM/STM
+management through RL-optimized tool actions---but both remain
+early-stage.
+
+No single paradigm masters all competencies; the evidence points toward
+hybrids combining temporal grounding, hierarchical consolidation,
+principled decay, and learned policies.
+
+%%% ------------------------------------------------------------------
+\section{Benchmark Evidence for the Temporal Deficit}
+%%% ------------------------------------------------------------------
+
+LoCoMo~\cite{maharana2024}, LongMemEval~\cite{wu2025},
+MemoryAgentBench~\cite{memoryagentbench2026}, and
+MemoryArena~\cite{memoryarena2026} evaluate temporal competence---yet
+LoCoMo is used by only 19\% of workshop papers; 43\% use custom
+benchmarks, fragmenting evaluation.
+
+LoCoMo-Plus~\cite{gurawaliya2026} provides the most fine-grained
+analysis. At short distance (1--2 weeks), Letta and Zep tie at 27.5\%;
+at long distance (3+ months), all converge to $\sim$20\%. Of 401
+dialogues, 59.1\% were wrong across \emph{all three} architectures;
+only 6.7\% correct by all---the deficit is structural, not
+architecture-specific.
+
+%%% ------------------------------------------------------------------
+\section{Four Open Challenges}
+%%% ------------------------------------------------------------------
+
+\paragraph{C1: Temporal grounding.}
+Of 70 workshop papers, 54\% have no temporal mechanism; of the 46\%
+that do, the vast majority use only timestamps or ordering---zero
+implement bi-temporal tracking or temporal consistency checking.
+Graphiti and TSM offer foundations, but neither handles temporal
+boundary uncertainty, conflicting evidence, or gradual state
+transitions. A unified temporal ontology is missing.
+
+\paragraph{C2: Cognitive consolidation.}
+Human memory consolidates experiences into abstract representations.
+Agent analogs exist (TiMem's hierarchical tree, Generative Agents'
+reflection~\cite{park2023}) but operate on ad-hoc schedules. Only
+31\% of workshop papers address consolidation; just 19\% implement
+explicit forgetting. Procedural memory---how to perform tasks---appears
+in only 24\% of papers despite being central to agent autonomy.
+
+\paragraph{C3: Collaborative memory, governance, and security.}
+The workshop reveals a single-agent bias: only 7\% address
+collaborative/shared memory; 6\% track provenance; 4\% address
+security; 3\% handle multi-modal memory; 1\% touch interoperability;
+zero papers target GDPR-compliant deletion as a primary contribution.
+Yet MINJA~\cite{minja2026} achieves 98\% injection success on shared
+memory agents. MemArchitect~\cite{memarchitect2026} and
+SSGM~\cite{ssgm2026} propose governance middleware;
+\emph{mnemonic sovereignty}~\cite{mnemonic2026} addresses EU AI Act
+compliance---but multi-user access control, memory portability, and
+causal provenance (3\%) remain open.
+
+%%% ------------------------------------------------------------------
+\section{Research Agenda and Conclusion}
+%%% ------------------------------------------------------------------
+
+Four research questions structure our agenda:
+\textbf{RQ1.}~What temporal ontology unifies event time, ingestion time,
+validity intervals, and gradual transitions?
+\textbf{RQ2.}~What consolidation mechanisms preserve temporal provenance
+while reducing memory volume?
+\textbf{RQ3.}~How can governance policies (including GDPR-compliant
+deletion) be enforced across heterogeneous memory backends?
+\textbf{RQ4.}~How should temporal benchmarks evolve beyond QA to evaluate
+belief revision, proactive recall, and temporal planning?
+
+Our workshop analysis reveals an \emph{episodic-temporal paradox}:
+59\% of papers address episodic memory, yet only 4\% implement
+temporal mechanisms beyond timestamps---episodes are treated as
+unordered collections rather than temporally situated experiences.
+The 35--45~pp factual-to-cognitive gap persists across all
+architectures. Closing it is the prerequisite for cognitive
+continuity---agents that maintain coherent, evolving understanding
+across unbounded interaction horizons.
+
+%%% ------------------------------------------------------------------
+\begin{thebibliography}{20}
+%%% ------------------------------------------------------------------
+
+\bibitem{sumers2024}
+Sumers, T.R., Yao, S., Narasimhan, K., Griffiths, T.L.: Cognitive
+Architectures for Language Agents. In: TMLR (2024)
+
+\bibitem{park2023}
+Park, J.S., et al.: Generative Agents: Interactive Simulacra of Human
+Behavior. In: UIST 2023
+
+\bibitem{mem0_2025}
+Chhikara, P., et al.: Mem0: Building Production-Ready AI Agents with
+Scalable Long-Term Memory. In: ECAI 2025
+
+\bibitem{packer2023}
+Packer, C., et al.: MemGPT: Towards LLMs as Operating Systems.
+arXiv:2310.08560 (2023)
+
+\bibitem{rasmussen2025}
+Rasmussen, P., et al.: Zep: A Temporal Knowledge Graph Architecture for
+Agent Memory. arXiv:2501.13956 (2025)
+
+\bibitem{hu2025}
+Hu, Y., et al.: Memory in the Age of AI Agents: A Survey---Forms,
+Functions and Dynamics. arXiv:2512.13564 (2025)
+
+\bibitem{zhang2024survey}
+Zhang, Z., et al.: A Survey on the Memory Mechanism of Large Language
+Model based Agents. In: ACM TOIS (2024)
+
+\bibitem{gurawaliya2026}
+Gurawaliya, H., Nalenz, M., Ma, M.: Agentic Memory Realized: From
+Stateless Models to Cognitive Continuity. appliedAI Initiative (2026)
+
+\bibitem{tsm2026}
+Beyond Dialogue Time: Temporal Semantic Memory for Personalized LLM Agents.
+arXiv:2601.07468 (2026)
+
+\bibitem{timem2026}
+TiMem: Temporal-Hierarchical Memory Consolidation for Long-Horizon
+Conversational Agents. arXiv:2601.02845 (2026)
+
+\bibitem{zhong2024}
+Zhong, W., et al.: MemoryBank: Enhancing Large Language Models with
+Long-Term Memory. In: AAAI 2024
+
+\bibitem{actr2025}
+Human-Like Remembering and Forgetting in LLM Agents: An ACT-R-Inspired
+Memory Architecture. In: HAI~'25
+
+\bibitem{maharana2024}
+Maharana, A., et al.: Evaluating Very Long-Term Conversational Memory of
+LLM Agents. In: ACL 2024
+
+\bibitem{wu2025}
+Wu, D., et al.: LongMemEval: Benchmarking Chat Assistants on Long-Term
+Interactive Memory. In: ICLR 2025
+
+\bibitem{memoryagentbench2026}
+Hu, Y., et al.: MemoryAgentBench: Evaluating Memory in LLM Agents via
+Incremental Multi-Turn Interactions. In: ICLR 2026
+
+\bibitem{memoryarena2026}
+MemoryArena: Evaluating Active Memory in Agentic Tasks. In: ICLR 2026
+
+\bibitem{memoryr1_2025}
+Memory-R1: RL Framework with Memory Manager for Agent Memory.
+arXiv (2025)
+
+\bibitem{agemem2026}
+AgeMem: Agentic Memory with Unified LTM/STM Management via RL.
+arXiv (2026)
+
+\bibitem{gam2026}
+Wu, Z., et al.: GAM: Hierarchical Graph Memory for LLM-based Agents.
+In: ICLR 2026
+
+\bibitem{memagents2026}
+MemAgents: Memory for LLM-Based Agentic Systems. ICLR 2026 Workshop
+
+\bibitem{minja2026}
+Zeng, H., et al.: Memory Injection Attacks on LLM Agents via
+Query-Only Interaction. In: MemAgents Workshop, ICLR 2026
+
+\bibitem{wang2025mextra}
+Wang, B., et al.: Unveiling Privacy Risks in LLM Agent Memory. In: ACL 2025
+
+\bibitem{memarchitect2026}
+Kumar, L.S., Ba, Y., Pan, R.: MemArchitect: A Policy Driven Memory
+Governance Layer. arXiv:2603.18330 (2026)
+
+\bibitem{ssgm2026}
+Lam, C., et al.: Governing Evolving Memory in LLM Agents: Risks,
+Mechanisms, and the SSGM Framework. arXiv:2603.11768 (2026)
+
+\bibitem{mnemonic2026}
+A Survey on the Security of Long-Term Memory in LLM Agents: Toward
+Mnemonic Sovereignty. arXiv:2604.16548 (2026)
+
+\bibitem{rezazadeh2025}
+Rezazadeh, A., et al.: Collaborative Memory: Multi-User Memory Sharing
+in LLM Agents with Dynamic Access Control. arXiv:2505.18279 (2025)
+
+\bibitem{shi2025}
+Shi, Z., et al.: Privacy-Enhancing Paradigms within Federated Multi-Agent
+Systems. In: ICML 2025
+
+\end{thebibliography}
+
+\end{document}
