@@ -1,0 +1,28 @@
+\ProvidesPackage{beamerfontthemePerelyn}[2026/05/12 v1.0 Perelyn font theme]
+\mode<presentation>
+
+%% Requires XeLaTeX or LuaLaTeX (compile with xelatex, not pdflatex).
+%% Install ABC Whyte first:  uv run python scripts/install_font.py <zip|folder>
+%% Falls back to Helvetica Neue (ships with macOS) if ABC Whyte is not found.
+\usepackage{fontspec}
+\IfFontExistsTF{ABC Whyte}{%
+  \setmainfont{ABC Whyte}%
+  \setsansfont{ABC Whyte}%
+}{%
+  \setmainfont{Helvetica Neue}%
+  \setsansfont{Helvetica Neue}%
+}
+
+\setbeamerfont{title}          {size=\Huge,   series=\bfseries}
+\setbeamerfont{subtitle}       {size=\large,  series=\mdseries}
+\setbeamerfont{author}         {size=\normalsize}
+\setbeamerfont{institute}      {size=\small}
+\setbeamerfont{date}           {size=\Large,  series=\bfseries}
+
+\setbeamerfont{frametitle}     {size=\large,  series=\mdseries}
+\setbeamerfont{framesubtitle}  {size=\small,  series=\mdseries}
+
+\setbeamerfont{footline}       {size=\tiny}
+\setbeamerfont{section in toc} {size=\normalsize}
+
+\mode<all>

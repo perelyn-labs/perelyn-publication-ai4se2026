@@ -1,0 +1,48 @@
+\ProvidesPackage{beamercolorthemePerelyn}[2026/05/12 v1.0 Perelyn color theme]
+\mode<presentation>
+
+%% ---- Brand palette --------------------------------------------------------
+\definecolor{pRed}  {RGB}{224, 82, 65}   % coral / salmon red
+\definecolor{pDark} {RGB}{ 40, 40, 40}   % near-black (sidebar, title bg)
+\definecolor{pGray} {RGB}{110,110,110}   % secondary text
+\definecolor{pRule} {RGB}{200,200,200}   % horizontal / vertical rules
+
+%% ---- Normal text ----------------------------------------------------------
+\setbeamercolor{normal text}     {fg=pDark, bg=white}
+\setbeamercolor{alerted text}    {fg=pRed}
+\setbeamercolor{example text}    {fg=pDark}
+\setbeamercolor{structure}       {fg=pRed}
+
+%% ---- Title page -----------------------------------------------------------
+\setbeamercolor{title}           {fg=white,  bg=pDark}
+\setbeamercolor{subtitle}        {fg=pRed,   bg=pDark}
+\setbeamercolor{author}          {fg=white,  bg=pDark}
+\setbeamercolor{institute}       {fg=pGray,  bg=pDark}
+\setbeamercolor{date}            {fg=pRed,   bg=pDark}
+
+%% ---- Frame header ---------------------------------------------------------
+\setbeamercolor{frametitle}      {fg=pDark,  bg=white}
+\setbeamercolor{framesubtitle}   {fg=pGray,  bg=white}
+
+%% ---- Sidebar + footline ---------------------------------------------------
+\setbeamercolor{sidebar left}    {bg=pDark}
+\setbeamercolor{footline}        {fg=pGray,  bg=white}
+
+%% ---- Lists ----------------------------------------------------------------
+\setbeamercolor{itemize item}        {fg=pRed}
+\setbeamercolor{itemize subitem}     {fg=pRed}
+\setbeamercolor{itemize subsubitem}  {fg=pRed}
+\setbeamercolor{enumerate item}      {fg=pRed}
+\setbeamercolor{enumerate subitem}   {fg=pRed}
+\setbeamercolor{section in toc}      {fg=pDark}
+\setbeamercolor{subsection in toc}   {fg=pGray}
+
+%% ---- Blocks ---------------------------------------------------------------
+\setbeamercolor{block title}         {fg=white, bg=pRed}
+\setbeamercolor{block body}          {fg=pDark, bg=pRule!25!white}
+\setbeamercolor{block title alerted} {fg=white, bg=pDark}
+\setbeamercolor{block body alerted}  {fg=pDark, bg=pRule!20!white}
+\setbeamercolor{block title example} {fg=white, bg=pGray}
+\setbeamercolor{block body example}  {fg=pDark, bg=pRule!20!white}
+
+\mode<all>

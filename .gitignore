@@ -30,3 +30,12 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+test_slides/
+narration_audio/
+narration_slides/
+review.md
+
+*.mp4
+*.wav
+*.mp3

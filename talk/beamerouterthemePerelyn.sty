@@ -1,0 +1,175 @@
+\ProvidesPackage{beamerouterthemePerelyn}[2026/05/12 v1.0 Perelyn outer theme]
+\mode<presentation>
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{graphicx}
+
+%% Single source-of-truth for the sidebar width.
+%% \setbeamersize{sidebar width left=\pSW} in beamerthemePerelyn.sty must match.
+\newlength{\pSW}
+\setlength{\pSW}{0.959cm}
+
+%% ============================================================
+%%  SIDEBAR LEFT — dark strip with logo at top and footer text
+%% ============================================================
+\setbeamertemplate{sidebar left}{%
+  %% 1. Fill sidebar with the dark brand colour
+  \begin{beamercolorbox}[wd=\pSW, ht=\paperheight, dp=0pt]{sidebar left}%
+  \end{beamercolorbox}%
+  %% 2. Overlay: logo + rotated footer text (TikZ gives pixel-precise placement)
+  \begin{tikzpicture}[remember picture, overlay]
+    %% Logo — top-left corner of the sidebar
+    \node[anchor=north west, inner sep=0.13cm, outer sep=0pt]
+      at (current page.north west)
+      {\includegraphics[height=0.65cm]{figures/Perelyn_Icon_White_RGB_S_240x240-px_150dpi}};
+    %% Rotated footer — three lines, bottom-aligned, in the sidebar
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray!80!white}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.23cm, 0.3cm)$)
+      {\insertshortauthor};
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray!80!white}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.475cm, 0.3cm)$)
+      {\copyright\,Company confidential\,--\,Perelyn GmbH};
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray!80!white}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.72cm, 0.3cm)$)
+      {\insertshortdate};
+  \end{tikzpicture}%
+}
+
+%% ============================================================
+%%  HEADLINE — empty (frametitle carries the full header row)
+%% ============================================================
+\setbeamertemplate{headline}{}
+
+%% ============================================================
+%%  FRAMETITLE — slide title + thin rule
+%% ============================================================
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[%
+      wd=\textwidth, ht=1.35cm, dp=0pt,
+      leftskip=0.2cm, rightskip=0.2cm]{frametitle}%
+    \vfill
+    \usebeamerfont{frametitle}%
+    \usebeamercolor[fg]{frametitle}%
+    \insertframetitle%
+    \ifx\insertframesubtitle\@empty\else%
+      \\[-0.05cm]%
+      \usebeamerfont{framesubtitle}%
+      \usebeamercolor[fg]{framesubtitle}%
+      \insertframesubtitle%
+    \fi%
+    \vspace{0.12cm}%
+  \end{beamercolorbox}%
+  {\color{pRule}\hrule height 0.4pt}%
+  \vspace{0.18cm}%
+}
+
+%% ============================================================
+%%  FOOTLINE — empty; footer lives in the sidebar
+%% ============================================================
+\setbeamertemplate{footline}{\vspace{0.25cm}}
+
+%% ============================================================
+%%  TITLE PAGE  (use inside \begin{frame}[plain])
+%% ============================================================
+\defbeamertemplate*{title page}{Perelyn}[1][]{%
+  \begin{tikzpicture}[remember picture, overlay]
+    %% Full dark background
+    \fill[pDark]
+      (current page.south west) rectangle (current page.north east);
+    %% Logo — top-left (white variant for dark background)
+    \node[anchor=north west, inner sep=0.22cm, outer sep=0pt]
+      at (current page.north west)
+      {\includegraphics[height=0.65cm]{figures/Perelyn_Icon_White_RGB_S_240x240-px_150dpi}};
+    %% Main title — large, white, uppercase
+    \node[
+      anchor=west,
+      text width=0.65\paperwidth,
+      align=left
+    ] at ($(current page.west) + (0.18\paperwidth, 0.05\paperheight)$) {%
+      \usebeamerfont{title}%
+      \usebeamercolor[fg]{title}%
+      \MakeUppercase{\inserttitle}%
+    };
+    %% Date / subtitle — coral red below title
+    \node[
+      anchor=north west,
+      text width=0.65\paperwidth,
+      align=left
+    ] at ($(current page.west) + (0.18\paperwidth, -0.13\paperheight)$) {%
+      \usebeamerfont{date}%
+      \usebeamercolor[fg]{date}%
+      \insertdate%
+      \ifx\insertsubtitle\@empty\else%
+        \\[0.2cm]%
+        \usebeamerfont{subtitle}%
+        \usebeamercolor[fg]{subtitle}%
+        \insertsubtitle%
+      \fi%
+    };
+    %% Rotated footer — three lines, bottom-aligned
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.23cm, 0.3cm)$)
+      {\insertshortauthor};
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.475cm, 0.3cm)$)
+      {\copyright\,Company confidential\,--\,Perelyn GmbH};
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.72cm, 0.3cm)$)
+      {\insertshortdate};
+  \end{tikzpicture}%
+}
+
+%% ============================================================
+%%  SECTION PAGE  (use via \sectionpage inside \begin{frame}[plain])
+%% ============================================================
+\defbeamertemplate*{section page}{Perelyn}[1][]{%
+  \begin{tikzpicture}[remember picture, overlay]
+    %% White background
+    \fill[white]
+      (current page.south west) rectangle (current page.north east);
+    %% Logo — top-left (black variant for white background)
+    \node[anchor=north west, inner sep=0.22cm, outer sep=0pt]
+      at (current page.north west)
+      {\includegraphics[height=0.65cm]{figures/Perelyn_Icon_Black_RGB_S}};
+    %% Vertical accent line — left edge of the text block
+    \draw[pGray!60!white, line width=0.7pt]
+      ($(current page.west) + (0.19\paperwidth,  0.26\paperheight)$) --
+      ($(current page.west) + (0.19\paperwidth, -0.12\paperheight)$);
+    %% Large section number — coral red
+    \node[
+      anchor=south west,
+      font=\fontsize{64}{64}\selectfont\bfseries\color{pRed}
+    ] at ($(current page.west) + (0.205\paperwidth, 0.04\paperheight)$)
+    {%
+      \ifnum\value{section}<10 0\fi\arabic{section}%
+    };
+    %% Section title — bold, dark
+    \node[
+      anchor=north west,
+      text width=0.58\paperwidth,
+      font=\Large\bfseries\color{pDark}
+    ] at ($(current page.west) + (0.205\paperwidth, 0.04\paperheight)$)
+    {\insertsection};
+    %% Speaker / subsection — regular weight
+    \node[
+      anchor=north west,
+      text width=0.58\paperwidth,
+      font=\normalsize\mdseries\color{pDark}
+    ] at ($(current page.west) + (0.205\paperwidth, -0.09\paperheight)$)
+    {\insertsubsection};
+    %% Rotated footer — three lines, bottom-aligned
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.23cm, 0.3cm)$)
+      {\insertshortauthor};
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.475cm, 0.3cm)$)
+      {\copyright\,Company confidential\,--\,Perelyn GmbH};
+    \node[anchor=west, rotate=90, font=\fontsize{5}{6}\selectfont\color{pGray}, inner sep=0pt, outer sep=0pt]
+      at ($(current page.south west) + (0.72cm, 0.3cm)$)
+      {\insertshortdate};
+  \end{tikzpicture}%
+}
+
+\mode<all>

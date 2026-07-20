@@ -1,5 +1,5 @@
-% AI4SE Workshop @ KI 2026 — Expanded Literature Review Draft
-% Springer LNCS format — EXPANDED beyond 4 pages, to be condensed later
+% AI4SE Workshop @ KI 2026 — Camera-Ready Version
+% Springer LNCS format — 8 pages text + references
 \documentclass[runningheads]{llncs}
 
 \usepackage[T1]{fontenc}
@@ -32,12 +32,12 @@ AI-assisted software engineering has progressed from code completion to
 agentic systems operating across the full development lifecycle. Yet
 these agents remain fundamentally stateless, i.e. each task begins without
 memory of prior sessions, resolved bugs, or accumulated project
-understanding. We present a survey that synthesizes
+understanding. In particular, they lack episodic memory, i.e.\ structured records of past sessions, debugging trajectories, and decision rationale, as well as temporal versioning, i.e.\ the ability to track when a piece of knowledge was valid, when it changed, and when it became stale. We present a survey that synthesizes
 evidence from a feature-level
 analysis of ten production software engineering harnesses with a specific focus on the current state of the art in memory architecture
 for software engineering agents research. Our analysis reveals an episodic-temporal deficit, i.e. no production harness ships
 episodic memory or temporal versioning natively. Interestingly, a rapidly growing
-ecosystem of MCP-based memory add-ons has emerged to fill the
+ecosystem of add-ons based on the Model Context Protocol (MCP) has emerged to fill the
 deficit. Yet, even these rarely implement temporal reasoning. Similarly, within the research community, while addressing episodic memory only a small fraction consider temporal
 mechanisms. At the same time, benchmarks confirm a
 factual-to-cognitive gap across production memory architectures. We argue that persistent, temporally grounded
@@ -57,16 +57,14 @@ lifecycle~\cite{becker2026,liu2024survey,jimenez2024swebench}. Whether
 resolving complex bugs through multi-file analysis, discovering
 architectural patterns, or coordinating code reviews across a team, these
 agents accumulate significant task-specific knowledge during each
-session. Yet that knowledge vanishes when the session ends: the next
+session. Yet that knowledge vanishes when the session ends, i.e. the next
 invocation begins from scratch, repeating investigations, rediscovering
-constraints, and re-learning project conventions.
+constraints, and re-learning project conventions. Recent production systems have begun to address this gap, e.g.\ Claude Code persists automatically extracted memories across sessions and Copilot injects repository-level custom instructions as reusable project context~\cite{agentreadmes2025}, but these mechanisms remain limited in scope and depth.
 
-The field has responded rapidly to the challenge~\cite{hu2025survey,memagents2026}, with every major AI provider now shipping
-persistent memory. Interestingly, no production harness implements episodic memory or temporal
-versioning natively, yet a thriving ecosystem of community-built MCP memory add-ons
-has emerged, evidence that practitioners feel the deficit
-acutely. However, fundamental properties such as temporal
-versioning, team-shared memory, or decision provenance are only rarely addressed.
+The field has responded rapidly~\cite{hu2025survey,memagents2026}, with every major AI provider now shipping
+some form of persistent memory. Yet no production harness implements episodic memory or temporal versioning natively. A thriving ecosystem of community-built MCP add-ons~\cite{mcpmemory2026} has emerged, evidence that practitioners feel the deficit acutely, but fundamental properties such as team-shared memory or decision provenance are only rarely addressed.
+
+In this paper, we survey and classify memory architectures for software engineering agents. Specifically, we i)~conduct a feature-level analysis of ten production software engineering harnesses and ten representative MCP-based community add-ons across 20~dimensions; ii)~classify memory architectures from the recent research literature; and iii)~identify open gaps at the intersection of memory research and software engineering practice. Our goal is to provide a structured overview of the current state of the art and to highlight where the most impactful research and engineering efforts are needed.
 
 %%% ==================================================================
 \section{Memory in Production Software Engineering Harnesses}\label{sec:harnesses}
@@ -77,19 +75,13 @@ components, i.e. \emph{working}, \emph{semantic}, i.e. conventions, facts, \emph
 \emph{procedural}, such as workflows or tool usage. Thereby, working memory is well-served by modern
 context windows and semantic memory is partially addressed by context
 files~\cite{agentreadmes2025}. However, episodic and procedural memory are almost
-entirely absent. 
-
-A finer-grained functional taxonomy~\cite{hu2025survey}
+entirely absent. A finer-grained functional taxonomy~\cite{hu2025survey}
 distinguishes \emph{factual}, i.e. what an agent knows, from \emph{experiential}, i.e. what the agent has learned from doing, and \emph{working} memory, i.e. active context management, with all three being critical for software engineering agents
-operating over long project horizons. From this perspective, we analyzed the memory mechanisms of ten widely-used software engineering agent
-harnesses. Table~\ref{tab:ecosystem} summarizes the
-comparison across 20 dimensions grouped into six categories, i.e. CoALA memory types, 
-memory operations, 
-temporal mechanisms, 
-software engineering specific capabilities, 
-collaboration \& governance, and integration.
+operating over long project horizons.
 
-All ten harnesses support human-written instruction files, representing declarative semantic memory, with widespread adoption~\cite{agentreadmes2025}, yet little resolution improvement~\cite{gloaguen2026}. Context
+We selected ten production software engineering agent harnesses (see Table~\ref{tab:ecosystem}) based on three criteria: i)~general availability as of June~2026, ii)~active development with at least one major update in the preceding six months, and iii)~widespread adoption. From over 40~MCP-based memory servers, we selected ten representative examples spanning different CoALA memory types. Each system was evaluated through official documentation and publications, hands-on testing where accessible, and community reports. Capabilities were rated as full support, partial support, or absent; ambiguous cases were rated conservatively.
+
+We evaluate along 20~dimensions grouped into six categories. The first three, \emph{CoALA memory types}, \emph{memory operations}, and \emph{temporal mechanisms}, are derived from the CoALA~\cite{sumers2024} and Hu~et~al.~\cite{hu2025survey} taxonomies. The remaining three, \emph{SE-specific capabilities}, \emph{collaboration \& governance}, and \emph{integration}, extend the evaluation to practical concerns specific to software engineering workflows. Table~\ref{tab:ecosystem} summarizes the comparison. All ten harnesses support human-written instruction files, representing declarative semantic memory, with widespread adoption~\cite{agentreadmes2025}, yet little resolution improvement~\cite{gloaguen2026}. Context
 engineering~\cite{contexteng2026} formalizes the approach, but all
 implementations remain manually authored without temporal metadata. Five harnesses generate memories automatically (Claude Code, Codex CLI,
 Copilot, Windsurf, Gemini CLI), but none distinguishes factual from
@@ -99,11 +91,8 @@ technical details, intermediate reasoning steps, and
 failed-approach information are discarded. However, the quality of compaction determines
 whether memory helps or hinders~\cite{zhu2026}. 
 
-No production system supports temporal versioning, i.e.\ tracking when
-knowledge was valid, when it changed, or when it became stale. Neither do they support
-episodic memory, i.e.\ structured records of past debugging sessions,
-resolution trajectories, or decision rationale. Notably, those memory capabilities most critical for software engineering agents that
-learn over time are those that no tool implements.
+No production system supports temporal versioning or episodic memory. Notably, those memory capabilities most critical for software engineering agents that
+learn over time are those that no tool implements. This gap has driven a community response, as described next.
 
 \begin{table}[h!]
 \centering
@@ -112,12 +101,11 @@ learn over time are those that no tool implements.
 \label{tab:ecosystem}
 \end{table}
 
-\subsection{The community response: MCP memory add-ons}
+\subsection{Community Extensions via MCP}\label{sec:mcp}
 
-The gap between what harnesses ship and what practitioners need has
+The gap between what production harnesses ship and what practitioners need has
 spawned a rapidly growing ecosystem of community-built memory
-extensions, primarily via the Model Context Protocol
-(MCP)~\cite{mcpmemory2026}. Our survey identifies over 40 MCP-based
+extensions via MCP~\cite{mcpmemory2026}. Our survey identifies over 40 MCP-based
 memory servers (see selection in table~\ref{tab:ecosystem}).
 The ecosystem spans every CoALA memory type, however with stark
 imbalances, i.e. semantic memory is near-universal,
@@ -148,12 +136,12 @@ contributions. Within this paradigm, approaches differ primarily in
 how they organize, consolidate, and temporally ground stored
 memories. A second, smaller cluster of non-RAG approaches operates
 at the model or inference level, including KV-cache compression,
-attention-based, and embedding-based methods. Cross-cutting learning
+attention-based, and embedding-based methods~\cite{hu2025survey}. Cross-cutting learning
 strategies such as experience replay, reinforcement learning-based
 management, and hierarchical consolidation span both clusters.
 Three retrieval-augmented variants have reached production maturity
 and been formally benchmarked head-to-head on the LoCoMo-Plus
-cognitive memory evaluation~\cite{gurawaliya2026}, i.e. extraction-based, self-managing, and graph-based temporal. 
+cognitive memory evaluation~\cite{gurawaliya2026}, i.e. extraction-based, self-managing, and graph-based temporal. Table~\ref{tab:architectures} summarizes their key properties and relates them to the evaluation dimensions of Table~\ref{tab:ecosystem}.
 
 %%% ------------------------------------------------------------------
 \subsection{Extraction-Based Memory}
@@ -161,7 +149,7 @@ cognitive memory evaluation~\cite{gurawaliya2026}, i.e. extraction-based, self-m
 
 Extraction-based architectures, such as Mem0~\cite{mem0_2025}, extract atomic facts from conversations and store
 them as vector-indexed entries for similarity based querying. Extraction-based systems excel at
-\emph{factual recall}. For software engineering tasks requiring explicit knowledge retrieval, this paradigm
+\emph{factual recall} and correspond to the \emph{semantic memory} and \emph{factual knowledge} columns in Table~\ref{tab:ecosystem}. For software engineering tasks requiring explicit knowledge retrieval, this paradigm
 is well-suited. However, extraction is lossy by design, e.g. the
 process of converting debugging sessions into atomic facts discards
 causal chains, temporal context, and reasoning paths~\cite{diagnosing2026}.
@@ -175,7 +163,7 @@ managing its own memory via explicit read/write/search operations over a
 hierarchical store. The agent decides what to remember and how to
 organize it. Self-managing memory excels at preserving
 \emph{behavioral continuity}, i.e. reasoning on goals, recurring patterns, and evolving
-state. For software engineering agents that must maintain an evolving picture of project
+state, corresponding to the \emph{experiential knowledge} and \emph{auto-generated memories} dimensions in Table~\ref{tab:ecosystem}. For software engineering agents that must maintain an evolving picture of project
 architecture, track long-running refactoring goals, or remember
 what patterns emerged during debugging, this is the
 strongest fit, although less transparent
@@ -187,7 +175,7 @@ inspected, audited, or corrected by developers.
 Graph-Based temporal approaches, such as Graphiti~\cite{rasmussen2025}, can distinguish \emph{event time}, i.e. when
 something happened, from \emph{ingestion time}, i.e. when the system learned
 it, with every edge carrying explicit validity intervals. This
-\emph{bi-temporal} approach is unique among production memory systems.
+\emph{bi-temporal} approach is unique among production memory systems and directly addresses the \emph{temporal versioning} and \emph{bi-temporal validity} dimensions that remain near-universally absent in Table~\ref{tab:ecosystem}.
 Graph-based memory excels at \emph{causal
 reasoning}. For software engineering tasks requiring understanding of why a
 decision was made, how events connect across time, or what caused a
@@ -206,31 +194,25 @@ heuristic memory policies with trained ones. The learned policies discover non-o
 preemptive summarization before the context window fills, suggesting a path toward adaptive memory management tuned
 to software engineering specific reward signals such as issue resolution rate, code quality
 metrics. Multi-graph memory, as in MAGMA~\cite{magma2026}, represents each memory item across orthogonal
-semantic, temporal, causal, and entity graphs, with retrieval
-formulated as policy-guided traversal. This decomposition offers
-fine-grained control particularly relevant for software engineering: dependency
-relationships via an entity graph, decision provenance via a causal graph,
-API validity via a temporal graph, and conceptual similarity via a semantic
-graph can be queried independently. A formal theory of hierarchical memory~\cite{hierarchicalmemory2026}
-defines three operators, i.e. extraction, coarsening, and traversal. This identifies a
-self-sufficiency spectrum for representative functions that
-constrains viable retrieval strategies. TiMem~\cite{timem2026}
-implements this via a temporal memory tree structure. For software engineering agents processing
-long execution traces, hierarchical consolidation could be essential. Hybrid local/cloud architectures are also emerging: LightMem~\cite{lightmem2026} delegates memory operations, such as routing or
-filtering, to small local models while reserving large models for
-consolidation, and HyMem~\cite{hymem2026} achieves comparable
-performance at reduced cost via dynamic two-tier retrieval.
+semantic, temporal, causal, and entity graphs with policy-guided traversal, offering fine-grained control relevant for software engineering, e.g.\ querying dependency relationships, decision provenance, or API validity independently. A formal theory of hierarchical memory~\cite{hierarchicalmemory2026} and its implementation TiMem~\cite{timem2026} define extraction, coarsening, and traversal operators over temporal memory trees, potentially essential for agents processing long execution traces. Hybrid local/cloud architectures are also emerging: LightMem~\cite{lightmem2026} delegates routing and filtering to small local models while HyMem~\cite{hymem2026} achieves comparable performance at reduced cost via dynamic two-tier retrieval.
 Since the majority of MCP memory servers support fully local operation and
 frameworks like Mem0, Letta, and Cognee run on Ollama, sovereign
 deployments are feasible, though reliable MCP tool calling requires
 14B+ parameter models~\cite{webcoach2026,erl2026}.
 
+\begin{table}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/architecture-table.png}
+\caption{Comparison of memory architecture paradigms across key properties relevant to software engineering agents.}
+\label{tab:architectures}
+\end{table}
+
 %%% ==================================================================
 \section{Memory Mechanisms for Software Engineering}\label{sec:semechanisms}
 %%% ==================================================================
 
-Beyond general-purpose memory architectures, several mechanisms have
-been developed specifically for or with direct relevance to software engineering agents.
+Beyond the general-purpose memory architectures compared in Table~\ref{tab:architectures}, several mechanisms have
+been developed specifically for or with direct relevance to software engineering agents. These address capabilities that remain largely absent in the production landscape surveyed in Table~\ref{tab:ecosystem}, particularly temporal versioning, decision provenance, and cross-session learning.
 
 %%% ------------------------------------------------------------------
 \subsection{Versioned Context Management and Decision Provenance}
@@ -250,28 +232,9 @@ as context length increases and agents drift from stale constraints, such as dep
 \subsection{Experiential and Cross-Session Learning}
 %%% ------------------------------------------------------------------
 
-The SWE Context Bench~\cite{zhu2026} evaluates whether agents benefit from prior experience with one critical finding, i.e. summarized experience improves resolution, while unfiltered experience hurts. Experiential Co-Learning~\cite{qian2024} mines experiences from historical trajectories and injects them into future task
-execution. Experiential Reflective Learning~\cite{erl2026} reflects on task trajectories to generate transferable
-heuristics, i.e. actionable lessons that generalize across tasks. Live-SWE-agent~\cite{xia2025}, rather than remembering past experiences, self-creates
-new tools during execution, representing procedural memory through self-modification. Structurally Aligned Subtask-Level Memory~\cite{subtaskmem2026} decomposes software engineering problem-solving into subtasks and aligns
-memory storage and retrieval at the subtask rather than the whole-instance level. MemGrad~\cite{memgrad2026} transforms batches of behavioral feedback into
-a dual memory strategy, i.e. retrospective memory captures recurring failure modes, while prospective memory encodes
-gradient-derived strategies for future reasoning.  Procedural memory, such as Mem$^{\mathrm{p}}$~\cite{memp2025},
-distills past agent trajectories into both
-fine-grained step-by-step instructions and higher-level script-like
-abstractions, creating learnable, updatable procedural memory.
-Procedural knowledge built from a stronger model transfers effectively
-to weaker ones. Strategy-level memory, such as ReasoningBank~\cite{reasoningbank2025},
-rather than storing raw trajectories, distills
-generalizable reasoning strategies from self-judged successes and
-failures. Finally, persistent note-taking~\cite{cca2025} introduces a cross-session note-taking system where agents record
-hindsight notes for compilation errors, runtime exceptions, and
-unproductive strategies. WebCoach~\cite{webcoach2026} reveals a striking capacity threshold for experiential memory: 7B
-models do not benefit from experiential memory, while 32B+ models
-show pronounced gains. Self-generated
-experiences outperform externally seeded ones~\cite{erl2026}. For software engineering agents, this implies that experiential
-memory requires both sufficient model capacity to reason over retrieved
-experience and careful curation to avoid context pollution.
+The SWE Context Bench~\cite{zhu2026} evaluates whether agents benefit from prior experience with one critical finding, i.e. summarized experience improves resolution, while unfiltered experience hurts. Several approaches address this through structured learning from trajectories. Experiential Co-Learning~\cite{qian2024} mines historical trajectories, Experiential Reflective Learning~\cite{erl2026} distills transferable heuristics, and Subtask-Level Memory~\cite{subtaskmem2026} aligns storage and retrieval at the subtask rather than instance level. MemGrad~\cite{memgrad2026} combines retrospective failure-mode capture with prospective gradient-derived strategies.
+Procedural memory, such as Mem$^{\mathrm{p}}$~\cite{memp2025}, distills trajectories into step-by-step instructions and higher-level abstractions, with procedural knowledge transferring effectively from stronger to weaker models. ReasoningBank~\cite{reasoningbank2025} distills generalizable reasoning strategies from self-judged successes and failures, while persistent note-taking~\cite{cca2025} records cross-session hindsight notes. Live-SWE-agent~\cite{xia2025} self-creates new tools during execution, representing procedural memory through self-modification.
+Notably, WebCoach~\cite{webcoach2026} reveals a capacity threshold, i.e. 7B models do not benefit from experiential memory, while 32B+ models show pronounced gains, and self-generated experiences outperform externally seeded ones~\cite{erl2026}.
 
 
 %%% ------------------------------------------------------------------
@@ -300,25 +263,14 @@ event progression graph.
 %%% ------------------------------------------------------------------
 
 Software engineering is inherently collaborative, yet memory research
-exhibits a strong single-agent bias~\cite{memagents2026}. To this end, Collaborative Memory~\cite{rezazadeh2025} is the most
-complete framework for multi-user memory sharing with dynamic access
-control. It maintains two tiers. These are \emph{Private memory}, which is visible only to
-the originating user and \emph{shared memory}, which consists of selectively shared
-fragments, where each fragment carries immutable provenance attributes, i.e. contributing agents, accessed resources, timestamps. This architecture
-maps naturally onto software engineering teams w.r.t private developer context, i.e. local
-experiments, debugging notes, versus shared project knowledge, i.e. coding
-conventions, architectural decisions, resolved issues. However, MINJA~\cite{minja2026} demonstrates that shared memory agents are vulnerable to query-only injection attacks. For software engineering
-agents with access to codebases and deployment pipelines, memory
-poisoning is a critical supply-chain risk. SSGM~\cite{ssgm2026} and MemArchitect~\cite{memarchitect2026} propose governance middleware for
-evolving memory, while the mnemonic sovereignty survey~\cite{mnemonic2026}
+exhibits a strong single-agent bias~\cite{memagents2026}. Collaborative Memory~\cite{rezazadeh2025} provides multi-user memory sharing with private and shared tiers, where each fragment carries immutable provenance attributes. This maps naturally onto software engineering teams, i.e.\ private developer context versus shared project knowledge. However, MINJA~\cite{minja2026} demonstrates that shared-memory agents are vulnerable to injection attacks, a critical supply-chain risk for agents with codebase access. SSGM~\cite{ssgm2026} and MemArchitect~\cite{memarchitect2026} propose governance middleware, while the mnemonic sovereignty survey~\cite{mnemonic2026}
 addresses EU AI Act compliance. Yet no approach targets software engineering-specific governance
-needs, such as access control aligned with repository permissions, memory
-provenance linked to code review approvals, or temporal policies tied
+needs such as repository-aligned access control or temporal policies tied
 to release cycles.
 
 
 %%% ==================================================================
-\section{Discussion: Open Gaps}\label{sec:gaps}
+\section{Discussion}\label{sec:gaps}
 %%% ==================================================================
 
 Synthesizing our analysis, we identified several open gaps specific to memory
@@ -336,16 +288,15 @@ ecosystem. The MCP ecosystem provides a composable memory architecture where
 each server addresses a different CoALA memory type. Yet no orchestration layer decides which
 memory to consult when, resolves conflicts between overlapping stores,
 or manages lifecycle across layers. Assembling the full stack remains
-a manual integration challenge. Closing these gaps will require a
+a manual integration challenge.
+
+Our analysis has limitations as it represents a snapshot as of mid~2026 in a rapidly evolving landscape, evaluations in Table~\ref{tab:ecosystem} are based on documentation and hands-on testing rather than controlled experiments, and our selection of MCP add-ons targets representativeness rather than completeness. Nevertheless, the convergent evidence across production harnesses, community add-ons, and research literature consistently points to the same structural deficits. Closing these gaps will require a
 coordinated effort and a clear vision of transforming software engineering agents from amnesic
 tools into learning collaborators that grow alongside the
 software they help build.
 
 %%% ==================================================================
 \begin{thebibliography}{50}
-\scriptsize
-\setlength{\itemsep}{-1pt}
-\setlength{\parsep}{0pt}
 
 \bibitem{becker2026}
 Becker, M.: Der KI-gest\"utzte Software-Entwicklungsprozess. BVMW, Perelyn GmbH (2026)

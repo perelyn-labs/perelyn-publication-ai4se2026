@@ -1,0 +1,37 @@
+# slides.yaml — slide-forge configuration
+
+source: ..                     # parent folder (the paper directory)
+
+theme: perelyn
+duration: 20min
+audience: researchers-general
+
+title: "Memory-Aware Software Engineering Agents"
+subtitle: "Architectures, Mechanisms, and Open Gaps"
+author: "Michael Banf"
+institute: "Perelyn GmbH, Munich"
+date: "AI4SE @ KI 2026"
+
+focus:
+  sections: []
+  skip: []
+  key_figures: [1, 2]
+
+narrative:
+  hook: "Why do our AI coding agents forget everything between sessions?"
+  arc: "problem → production landscape → memory architectures → SE-specific mechanisms → open gaps → vision"
+  takeaway: "Persistent, temporally grounded memory is the prerequisite for SE agents that learn alongside the teams they serve."
+
+style:
+  math: light
+  code: false
+  citations: sparse
+
+constraints:
+  - "No more than 5 items per slide"
+  - "Use \\alert{} for key concepts"
+  - "Include section dividers between major transitions"
+  - "Reference specific systems by name (Mem0, Letta, Graphiti, etc.)"
+  - "Highlight the episodic-temporal deficit as the central finding"
+
+notes: true

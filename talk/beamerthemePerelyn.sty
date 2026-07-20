@@ -1,0 +1,20 @@
+\ProvidesPackage{beamerthemePerelyn}[2026/05/12 v1.0 Perelyn Beamer theme]
+%%
+%% Usage:
+%%   \documentclass[aspectratio=169]{beamer}
+%%   \usetheme{Perelyn}
+%%
+\mode<presentation>
+
+%% Load sub-themes in dependency order
+\usecolortheme{Perelyn}
+\usefonttheme{Perelyn}
+\useinnertheme{Perelyn}
+\useoutertheme{Perelyn}
+
+%% Sidebar width — must equal \pSW defined in beamerouterthemePerelyn.sty
+\setbeamersize{sidebar width left=0.959cm}
+%% Text margins inside the main content area
+\setbeamersize{text margin left=0.25cm, text margin right=0.40cm}
+
+\mode<all>
